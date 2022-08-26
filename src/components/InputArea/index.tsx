@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { newDateAdjusted } from "../../helpers/dateFilter";
 import { Item } from "../../types/Item";
+import { CurrencyInput } from "../CurrencyInput";
 import * as C from "./styles";
 
 interface InputAreaProps {
@@ -11,7 +12,7 @@ interface InputAreaProps {
 export const InputArea = ({ onAdd }: InputAreaProps) => {
 
     const [dateField, setDateField] = useState('');
-    const [valueField, setValueField] = useState(0);
+    const [valueField, setValueField] = useState('');
 
     const handleAddEvent = (event: React.FormEvent<HTMLFormElement>) => {
 
@@ -21,11 +22,12 @@ export const InputArea = ({ onAdd }: InputAreaProps) => {
 
         let category = (data.get('category')) as string;
         let title = (data.get('title')) as string;
+        let currentValue = valueField.replace(/[^0-9]/g, '');
         let newItem: Item = {
             date: newDateAdjusted(dateField),
             category: category,
             title: title,
-            value: valueField
+            value: Number(currentValue) / 100
         }
         onAdd(newItem);
     }
@@ -43,12 +45,7 @@ export const InputArea = ({ onAdd }: InputAreaProps) => {
                 required={true}
                 name="title"
             />
-            <input type="number"
-                placeholder="R$ 0,00"
-                autoComplete="off"
-                required
-                onChange={e => setValueField(parseFloat(e.target.value))}
-            />
+            <CurrencyInput value={valueField} setValue={setValueField} />
             <button type="submit">Add</button>
         </C.Container>
     );
